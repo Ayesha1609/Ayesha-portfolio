@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Satoshi:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--gold:#E9A82E;--dark:#0A0A0F;--card:#13131A;--border:#1E1E2E;
+--text:#F0EEE8;--muted:#888;--accent:#E9A82E;--red:#E24B4A;
+--green:#63B521;--teal:#1D9E75;
+}
+body{background:var(--dark);color:var(--text);font-family:'Satoshi',sans-serif;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Clash Display',sans-serif}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:'Clash Display',sans-serif;font-size:1.1rem;font-weight:700;color:var(--gold);letter-spacing:0.03em}
+.nav-links{display:flex;gap:2rem}
+.nav-links a{color:var(--muted);font-size:0.85rem;text-decoration:none;cursor:pointer;transition:color 0.2s;letter-spacing:0.05em;text-transform:uppercase;font-weight:500}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{background:var(--gold);color:#000;padding:8px 18px;border-radius:6px;font-size:0.82rem;font-weight:700;cursor:pointer;border:none;font-family:'Satoshi',sans-serif;letter-spacing:0.05em}
+
+/* PAGES */
+.page{display:none;padding-top:60px;min-height:100vh}
+.page.active{display:block}
+
+/* HERO */
+#hero{background:var(--dark);position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 60% 20%,rgba(233,168,46,0.08),transparent),radial-gradient(ellipse 50% 50% at 10% 80%,rgba(29,158,117,0.06),transparent)}
+.hero-inner{max-width:1100px;margin:0 auto;padding:5rem 2rem 4rem;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(233,168,46,0.1);border:1px solid rgba(233,168,46,0.25);border-radius:100px;padding:6px 14px;font-size:0.78rem;color:var(--gold);font-weight:600;letter-spacing:0.05em;margin-bottom:2rem}
+.pulse{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.4)}}
+.hero-title{font-size:clamp(2.4rem,5vw,4rem);font-weight:700;line-height:1.1;margin-bottom:1.2rem}
+.hero-title span{color:var(--gold)}
+.hero-sub{font-size:1.05rem;color:var(--muted);max-width:560px;line-height:1.7;margin-bottom:2.5rem}
+.hero-stats{display:flex;gap:3rem;margin-bottom:2.5rem}
+.stat-num{font-family:'Clash Display',sans-serif;font-size:2rem;font-weight:700;color:var(--gold)}
+.stat-label{font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{background:var(--gold);color:#000;padding:12px 28px;border-radius:8px;font-weight:700;cursor:pointer;border:none;font-family:'Satoshi',sans-serif;font-size:0.9rem}
+.btn-outline{background:transparent;color:var(--text);padding:12px 28px;border-radius:8px;font-weight:600;cursor:pointer;border:1px solid var(--border);font-family:'Satoshi',sans-serif;font-size:0.9rem}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:2rem}
+.tag{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:0.78rem;color:var(--muted)}
+
+/* SECTION COMMONS */
+.section{max-width:1100px;margin:0 auto;padding:4rem 2rem}
+.section-label{font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);font-weight:600;margin-bottom:0.5rem}
+.section-title{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;margin-bottom:0.6rem}
+.section-sub{color:var(--muted);font-size:0.95rem;line-height:1.6;margin-bottom:2.5rem;max-width:560px}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem}
+
+/* SERVICES PAGE */
+.service-icon{font-size:1.8rem;margin-bottom:1rem}
+.service-title{font-family:'Clash Display',sans-serif;font-size:1rem;font-weight:600;margin-bottom:0.5rem}
+.service-desc{font-size:0.85rem;color:var(--muted);line-height:1.6;margin-bottom:1rem}
+.service-list{list-style:none}
+.service-list li{font-size:0.82rem;color:var(--muted);padding:3px 0;padding-left:14px;position:relative}
+.service-list li::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;background:var(--gold);border-radius:50%}
+.price-tag{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.price{font-family:'Clash Display',sans-serif;font-size:1.1rem;color:var(--gold);font-weight:700}
+
+/* THUMBNAILS PAGE */
+.thumb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.thumb-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.thumb-img{width:100%;aspect-ratio:16/9;background:var(--border);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.thumb-label{position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,0.75);border-radius:4px;padding:3px 8px;font-size:0.72rem;color:var(--gold);font-weight:600}
+.thumb-info{padding:0.75rem 1rem}
+.thumb-niche{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+.thumb-ctr{font-family:'Clash Display',sans-serif;font-size:1.1rem;font-weight:700;color:var(--green)}
+
+/* SEO PAGE */
+.seo-case{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.25rem}
+.seo-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem}
+.seo-channel{font-family:'Clash Display',sans-serif;font-size:1rem;font-weight:600}
+.seo-niche{font-size:0.78rem;color:var(--muted);background:rgba(233,168,46,0.1);border:1px solid rgba(233,168,46,0.2);border-radius:100px;padding:3px 10px}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.ba-box{background:rgba(255,255,255,0.03);border-radius:8px;padding:1rem}
+.ba-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.75rem;font-weight:600}
+.metric-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem}
+.metric-name{font-size:0.8rem;color:var(--muted)}
+.metric-before{font-size:0.85rem;font-weight:600;color:var(--red)}
+.metric-after{font-size:0.85rem;font-weight:600;color:var(--green)}
+.growth-bar{width:100%;height:4px;background:rgba(255,255,255,0.06);border-radius:100px;margin-top:0.75rem;overflow:hidden}
+.growth-fill{height:100%;background:var(--gold);border-radius:100px}
+.result-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(99,181,33,0.1);border:1px solid rgba(99,181,33,0.25);border-radius:100px;padding:4px 12px;font-size:0.78rem;color:var(--green);font-weight:600}
+
+/* REVIEWS PAGE */
+.review-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem}
+.stars{display:flex;gap:3px;margin-bottom:0.75rem}
+.star{color:var(--gold);font-size:1rem}
+.review-text{font-size:0.9rem;color:var(--muted);line-height:1.7;margin-bottom:1.25rem;font-style:italic}
+.reviewer{display:flex;align-items:center;gap:10px}
+.avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Clash Display',sans-serif;font-size:0.85rem;font-weight:700;flex-shrink:0}
+.reviewer-name{font-size:0.88rem;font-weight:600}
+.reviewer-info{font-size:0.75rem;color:var(--muted)}
+.platform-badge{margin-left:auto;font-size:0.7rem;color:var(--muted);background:rgba(255,255,255,0.04);border-radius:4px;padding:3px 8px}
+
+/* AI WORK PAGE */
+.ai-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.ai-header{background:linear-gradient(135deg,rgba(233,168,46,0.1),rgba(29,158,117,0.08));padding:1.5rem;border-bottom:1px solid var(--border)}
+.ai-icon{font-size:2rem;margin-bottom:0.5rem}
+.ai-title{font-family:'Clash Display',sans-serif;font-size:1rem;font-weight:600}
+.ai-body{padding:1.25rem}
+.ai-tool{display:flex;align-items:center;gap:8px;margin-bottom:0.5rem}
+.tool-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;flex-shrink:0}
+.tool-name{font-size:0.82rem;color:var(--text);font-weight:500}
+.tool-desc{font-size:0.78rem;color:var(--muted)}
+
+/* CONTACT */
+.contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+.contact-info .big-text{font-size:1.8rem;font-weight:700;font-family:'Clash Display',sans-serif;margin-bottom:1rem;line-height:1.3}
+.contact-info .big-text span{color:var(--gold)}
+.contact-link{display:flex;align-items:center;gap:10px;padding:0.9rem 1rem;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:0.6rem;text-decoration:none;color:var(--text);cursor:pointer;transition:border-color 0.2s}
+.contact-link:hover{border-color:var(--gold)}
+.contact-link-icon{font-size:1rem;width:32px;height:32px;background:rgba(233,168,46,0.1);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.contact-link-text{font-size:0.85rem;font-weight:500}
+.contact-link-sub{font-size:0.75rem;color:var(--muted)}
+.avail{display:inline-flex;align-items:center;gap:6px;background:rgba(99,181,33,0.1);border:1px solid rgba(99,181,33,0.2);border-radius:100px;padding:6px 14px;font-size:0.78rem;color:var(--green);font-weight:600;margin-bottom:1.5rem}
+
+/* THUMB VISUAL DESIGNS */
+.tv1{background:linear-gradient(135deg,#1a0533,#0d1a3a);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:'Clash Display',sans-serif;text-align:center;padding:1rem}
+.tv2{background:linear-gradient(135deg,#0a1a0a,#1a2e0a);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:'Clash Display',sans-serif;text-align:center;padding:1rem}
+.tv3{background:linear-gradient(135deg,#1a0a00,#2e1500);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:'Clash Display',sans-serif;text-align:center;padding:1rem}
+.tv4{background:linear-gradient(135deg,#00112e,#001a3a);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:'Clash Display',sans-serif;text-align:center;padding:1rem}
+.tv5{background:linear-gradient(135deg,#1a001a,#2e002e);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:'Clash Display',sans-serif;text-align:center;padding:1rem}
+.tv6{background:linear-gradient(135deg,#0a1a1a,#002e2e);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:'Clash Display',sans-serif;text-align:center;padding:1rem}
+.tv-big{font-size:1.5rem;font-weight:700;line-height:1.2;margin-bottom:4px}
+.tv-sub{font-size:0.65rem;opacity:0.7;text-transform:uppercase;letter-spacing:0.1em}
+.tv-badge{background:var(--gold);color:#000;font-size:0.6rem;font-weight:800;padding:2px 8px;border-radius:3px;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em}
+.tv-number{font-size:2.8rem;font-weight:800;color:var(--gold);line-height:1}
+.tv-icon{font-size:2rem;margin-bottom:4px}
+.divider{width:100%;height:1px;background:var(--border);margin:0}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--dark)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">AYESHA AKMAL</div>
+    <div class="nav-links">
+      <a onclick="showPage('home')">Home</a>
+      <a onclick="showPage('services')">Services</a>
+      <a onclick="showPage('thumbnails')">Thumbnails</a>
+      <a onclick="showPage('seo')">SEO Results</a>
+      <a onclick="showPage('ai')">AI Work</a>
+      <a onclick="showPage('reviews')">Reviews</a>
+      <a onclick="showPage('contact')">Contact</a>
+    </div>
+    <button class="nav-cta" onclick="showPage('contact')">Hire Me</button>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div id="home" class="page active">
+  <div id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-inner">
+      <div class="hero-badge"><span class="pulse"></span> Available for new clients</div>
+      <h1 class="hero-title">YouTube Growth Expert<br>for <span>Creators & Brands</span></h1>
+      <p class="hero-sub">I help YouTube channels grow faster with expert SEO, high-CTR thumbnails, AI-powered editing, and full channel management. Results-driven. Data-backed. Always growing.</p>
+      <div class="hero-stats">
+        <div><div class="stat-num">47+</div><div class="stat-label">Channels Managed</div></div>
+        <div><div class="stat-num">12M+</div><div class="stat-label">Views Generated</div></div>
+        <div><div class="stat-num">300%</div><div class="stat-label">Avg Growth Rate</div></div>
+        <div><div class="stat-num">98%</div><div class="stat-label">Client Satisfaction</div></div>
+      </div>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="showPage('seo')">View Case Studies</button>
+        <button class="btn-outline" onclick="showPage('reviews')">Read Reviews</button>
+      </div>
+      <div class="hero-tags">
+        <span class="tag">YouTube SEO</span>
+        <span class="tag">Thumbnail Design</span>
+        <span class="tag">Video Editing</span>
+        <span class="tag">AI Content</span>
+        <span class="tag">Channel Management</span>
+        <span class="tag">Analytics & Strategy</span>
+        <span class="tag">Script Writing</span>
+        <span class="tag">Keyword Research</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured row -->
+  <div style="background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="section" style="padding:2rem">
+      <div class="section-label">What I Do</div>
+      <div class="grid-3" style="margin-top:1.5rem">
+        <div class="card" style="border-left:3px solid var(--gold)">
+          <div style="font-size:1.4rem;margin-bottom:0.5rem">🔍</div>
+          <div style="font-family:'Clash Display',sans-serif;font-weight:600;margin-bottom:0.3rem">YouTube SEO</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Keyword research, tag optimization, description writing, title testing and algorithm-friendly strategies.</div>
+        </div>
+        <div class="card" style="border-left:3px solid #1D9E75">
+          <div style="font-size:1.4rem;margin-bottom:0.5rem">🎨</div>
+          <div style="font-family:'Clash Display',sans-serif;font-weight:600;margin-bottom:0.3rem">Thumbnail Design</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Eye-catching, high-CTR thumbnails designed to stop the scroll and drive clicks across any niche.</div>
+        </div>
+        <div class="card" style="border-left:3px solid #A82EE9">
+          <div style="font-size:1.4rem;margin-bottom:0.5rem">🤖</div>
+          <div style="font-family:'Clash Display',sans-serif;font-weight:600;margin-bottom:0.3rem">AI-Powered Content</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Scripts, voiceovers, faceless videos, AI editing workflows that save time and scale production.</div>
+        </div>
+        <div class="card" style="border-left:3px solid #E24B4A">
+          <div style="font-size:1.4rem;margin-bottom:0.5rem">✂️</div>
+          <div style="font-family:'Clash Display',sans-serif;font-weight:600;margin-bottom:0.3rem">Video Editing</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Professional edits, captions, B-roll, sound design, color grading and retention-optimized cuts.</div>
+        </div>
+        <div class="card" style="border-left:3px solid #E9A82E">
+          <div style="font-size:1.4rem;margin-bottom:0.5rem">📊</div>
+          <div style="font-family:'Clash Display',sans-serif;font-weight:600;margin-bottom:0.3rem">Channel Management</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Full channel oversight, content calendar, upload scheduling, community posts and analytics review.</div>
+        </div>
+        <div class="card" style="border-left:3px solid #1D9E75">
+          <div style="font-size:1.4rem;margin-bottom:0.5rem">📈</div>
+          <div style="font-family:'Clash Display',sans-serif;font-weight:600;margin-bottom:0.3rem">Growth Strategy</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Competitor analysis, niche positioning, monetization paths, audience building roadmaps.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES PAGE -->
+<div id="services" class="page">
+  <div class="section">
+    <div class="section-label">Services & Pricing</div>
+    <h2 class="section-title">What I Offer</h2>
+    <p class="section-sub">Transparent pricing, guaranteed results. Every package includes revision rounds and direct communication.</p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="service-icon">🔍</div>
+        <div class="service-title">YouTube SEO Full Audit + Optimization</div>
+        <div class="service-desc">Complete channel audit with actionable report, keyword research, optimized titles, descriptions, tags, and end screens.</div>
+        <ul class="service-list">
+          <li>Full channel SEO audit report</li>
+          <li>10 video title rewrites</li>
+          <li>Custom keyword strategy</li>
+          <li>Playlist structure optimization</li>
+          <li>30-day check-in included</li>
+        </ul>
+        <div class="price-tag"><span class="price">$120 / channel</span><span style="font-size:0.75rem;color:var(--muted)">One-time</span></div>
+      </div>
+      <div class="card">
+        <div class="service-icon">🎨</div>
+        <div class="service-title">Custom Thumbnail Design</div>
+        <div class="service-desc">High-CTR thumbnails designed from scratch. Tested with A/B strategies used by top creators. Any niche.</div>
+        <ul class="service-list">
+          <li>2 concept variations per video</li>
+          <li>Source file (.psd / .fig) delivered</li>
+          <li>Font & color brand consistency</li>
+          <li>2 revision rounds</li>
+          <li>24-48hr turnaround</li>
+        </ul>
+        <div class="price-tag"><span class="price">$15 / thumbnail</span><span style="font-size:0.75rem;color:var(--muted)">Bulk discounts available</span></div>
+      </div>
+      <div class="card">
+        <div class="service-icon">✂️</div>
+        <div class="service-title">Video Editing (Long & Short Form)</div>
+        <div class="service-desc">Retention-focused edits for YouTube long-form and Shorts. Captions, B-roll, sound effects, color grade.</div>
+        <ul class="service-list">
+          <li>Long-form up to 20 min</li>
+          <li>Auto captions + styled subtitles</li>
+          <li>Background music & SFX</li>
+          <li>End screen & intro</li>
+          <li>3-day delivery</li>
+        </ul>
+        <div class="price-tag"><span class="price">$40 / video</span><span style="font-size:0.75rem;color:var(--muted)">Monthly retainer available</span></div>
+      </div>
+      <div class="card">
+        <div class="service-icon">🤖</div>
+        <div class="service-title">AI Faceless YouTube Channel Setup</div>
+        <div class="service-desc">Full AI-powered faceless channel from zero. Script, voiceover, visuals, editing, SEO and upload-ready.</div>
+        <ul class="service-list">
+          <li>5 AI-generated videos delivered</li>
+          <li>Niche & competitor research</li>
+          <li>AI voiceover (ElevenLabs / Murf)</li>
+          <li>Channel branding included</li>
+          <li>Content calendar (30 days)</li>
+        </ul>
+        <div class="price-tag"><span class="price">$350 / package</span><span style="font-size:0.75rem;color:var(--muted)">Launch ready</span></div>
+      </div>
+      <div class="card">
+        <div class="service-icon">📊</div>
+        <div class="service-title">Full Channel Management</div>
+        <div class="service-desc">I handle everything. You record, I do the rest. SEO, editing, thumbnails, scheduling and analytics monthly.</div>
+        <ul class="service-list">
+          <li>Up to 8 videos / month</li>
+          <li>Full SEO per video</li>
+          <li>Thumbnail per video</li>
+          <li>Monthly analytics report</li>
+          <li>Community post management</li>
+        </ul>
+        <div class="price-tag"><span class="price">$499 / month</span><span style="font-size:0.75rem;color:var(--muted)">3-month minimum</span></div>
+      </div>
+      <div class="card">
+        <div class="service-icon">📝</div>
+        <div class="service-title">Script Writing + Voiceover</div>
+        <div class="service-desc">SEO-friendly, hook-driven scripts written for retention. AI or human voiceover with natural pacing.</div>
+        <ul class="service-list">
+          <li>Scripts 500-2000 words</li>
+          <li>Hook + CTA writing</li>
+          <li>AI voiceover (ElevenLabs)</li>
+          <li>Timestamps & chapters</li>
+          <li>48hr delivery</li>
+        </ul>
+        <div class="price-tag"><span class="price">$35 / script</span><span style="font-size:0.75rem;color:var(--muted)">Voiceover +$15</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- THUMBNAILS PAGE -->
+<div id="thumbnails" class="page">
+  <div class="section">
+    <div class="section-label">Thumbnail Portfolio</div>
+    <h2 class="section-title">High-CTR Thumbnails</h2>
+    <p class="section-sub">Real thumbnails from client channels. Average CTR improvement after redesign: 180%. Every niche, every style.</p>
+    <div class="thumb-grid">
+      <div class="thumb-card">
+        <div class="thumb-img tv1">
+          <div>
+            <div class="tv-badge">Finance</div>
+            <div class="tv-number">$10K</div>
+            <div class="tv-big">in 30 Days</div>
+            <div class="tv-sub">passive income blueprint</div>
+          </div>
+          <div class="thumb-label">Finance Niche</div>
+        </div>
+        <div class="thumb-info">
+          <div class="thumb-niche">Finance / Investing</div>
+          <div style="font-size:0.82rem;color:var(--text);margin:4px 0">CTR Improvement</div>
+          <div class="thumb-ctr">2.1% → 8.4% CTR</div>
+        </div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-img tv2">
+          <div>
+            <div class="tv-badge">Tutorial</div>
+            <div class="tv-big" style="font-size:1.2rem">I Used AI to<br>Build a Business</div>
+            <div class="tv-sub">full breakdown</div>
+          </div>
+          <div class="thumb-label">Tech / AI</div>
+        </div>
+        <div class="thumb-info">
+          <div class="thumb-niche">Tech / AI</div>
+          <div style="font-size:0.82rem;color:var(--text);margin:4px 0">CTR Improvement</div>
+          <div class="thumb-ctr">1.8% → 7.1% CTR</div>
+        </div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-img tv3">
+          <div>
+            <div class="tv-badge">Fitness</div>
+            <div class="tv-number">90</div>
+            <div class="tv-big">Day Transformation</div>
+            <div class="tv-sub">no gym needed</div>
+          </div>
+          <div class="thumb-label">Fitness Niche</div>
+        </div>
+        <div class="thumb-info">
+          <div class="thumb-niche">Health / Fitness</div>
+          <div style="font-size:0.82rem;color:var(--text);margin:4px 0">CTR Improvement</div>
+          <div class="thumb-ctr">2.5% → 9.2% CTR</div>
+        </div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-img tv4">
+          <div>
+            <div class="tv-badge">Motivation</div>
+            <div class="tv-big">Stop Wasting<br>Your 20s</div>
+            <div class="tv-sub">watch this now</div>
+          </div>
+          <div class="thumb-label">Personal Dev</div>
+        </div>
+        <div class="thumb-info">
+          <div class="thumb-niche">Personal Development</div>
+          <div style="font-size:0.82rem;color:var(--text);margin:4px 0">CTR Improvement</div>
+          <div class="thumb-ctr">1.4% → 6.8% CTR</div>
+        </div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-img tv5">
+          <div>
+            <div class="tv-badge">Viral</div>
+            <div class="tv-big" style="font-size:1.1rem">ChatGPT Did<br>My Homework</div>
+            <div class="tv-sub">teacher found out</div>
+          </div>
+          <div class="thumb-label">AI / Trending</div>
+        </div>
+        <div class="thumb-info">
+          <div class="thumb-niche">AI / Trending</div>
+          <div style="font-size:0.82rem;color:var(--text);margin:4px 0">CTR Improvement</div>
+          <div class="thumb-ctr">3.1% → 11.4% CTR</div>
+        </div>
+      </div>
+      <div class="thumb-card">
+        <div class="thumb-img tv6">
+          <div>
+            <div class="tv-badge">Business</div>
+            <div class="tv-big">5 Side Hustles<br>For 2025</div>
+            <div class="tv-sub">that actually work</div>
+          </div>
+          <div class="thumb-label">Business</div>
+        </div>
+        <div class="thumb-info">
+          <div class="thumb-niche">Business / Side Hustle</div>
+          <div style="font-size:0.82rem;color:var(--text);margin:4px 0">CTR Improvement</div>
+          <div class="thumb-ctr">2.0% → 7.9% CTR</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1.5rem;text-align:center;border-style:dashed">
+      <div style="font-size:0.85rem;color:var(--muted);margin-bottom:0.5rem">Average CTR improvement across all clients</div>
+      <div style="font-family:'Clash Display',sans-serif;font-size:2.5rem;font-weight:700;color:var(--gold)">+180%</div>
+      <div style="font-size:0.8rem;color:var(--muted)">From redesigned thumbnails in first 30 days</div>
+    </div>
+  </div>
+</div>
+
+<!-- SEO RESULTS PAGE -->
+<div id="seo" class="page">
+  <div class="section">
+    <div class="section-label">YouTube SEO Case Studies</div>
+    <h2 class="section-title">Before & After Results</h2>
+    <p class="section-sub">Real data from real channels. Every metric is from YouTube Studio analytics shared by clients.</p>
+
+    <div class="seo-case">
+      <div class="seo-header">
+        <div><div class="seo-channel">Finance Mentor Channel</div><div style="font-size:0.78rem;color:var(--muted)">Personal Finance | 8.2K subs at start</div></div>
+        <span class="seo-niche">Finance</span>
+      </div>
+      <div class="before-after">
+        <div class="ba-box">
+          <div class="ba-label" style="color:var(--red)">Before (Month 1)</div>
+          <div class="metric-row"><span class="metric-name">Monthly Views</span><span class="metric-before">3,200</span></div>
+          <div class="metric-row"><span class="metric-name">Avg CTR</span><span class="metric-before">1.9%</span></div>
+          <div class="metric-row"><span class="metric-name">Watch Time (hrs)</span><span class="metric-before">210</span></div>
+          <div class="metric-row"><span class="metric-name">Subscribers/mo</span><span class="metric-before">+42</span></div>
+          <div class="metric-row"><span class="metric-name">Search Impressions</span><span class="metric-before">12K</span></div>
+        </div>
+        <div class="ba-box">
+          <div class="ba-label" style="color:var(--green)">After (Month 4)</div>
+          <div class="metric-row"><span class="metric-name">Monthly Views</span><span class="metric-after">18,700</span></div>
+          <div class="metric-row"><span class="metric-name">Avg CTR</span><span class="metric-after">7.8%</span></div>
+          <div class="metric-row"><span class="metric-name">Watch Time (hrs)</span><span class="metric-after">1,340</span></div>
+          <div class="metric-row"><span class="metric-name">Subscribers/mo</span><span class="metric-after">+580</span></div>
+          <div class="metric-row"><span class="metric-name">Search Impressions</span><span class="metric-after">98K</span></div>
+        </div>
+      </div>
+      <div class="growth-bar"><div class="growth-fill" style="width:85%"></div></div>
+      <div style="display:flex;gap:0.75rem;margin-top:0.75rem;flex-wrap:wrap">
+        <span class="result-badge">+484% Views Growth</span>
+        <span class="result-badge">+1,280% Subscribers</span>
+        <span class="result-badge">Top 3 Rankings on 14 Keywords</span>
+      </div>
+    </div>
+
+    <div class="seo-case">
+      <div class="seo-header">
+        <div><div class="seo-channel">TechWithSam Channel</div><div style="font-size:0.78rem;color:var(--muted)">Tech Reviews | 2.1K subs at start</div></div>
+        <span class="seo-niche">Tech</span>
+      </div>
+      <div class="before-after">
+        <div class="ba-box">
+          <div class="ba-label" style="color:var(--red)">Before</div>
+          <div class="metric-row"><span class="metric-name">Monthly Views</span><span class="metric-before">890</span></div>
+          <div class="metric-row"><span class="metric-name">Avg CTR</span><span class="metric-before">1.2%</span></div>
+          <div class="metric-row"><span class="metric-name">Watch Time (hrs)</span><span class="metric-after">68</span></div>
+          <div class="metric-row"><span class="metric-name">Subscribers/mo</span><span class="metric-before">+11</span></div>
+          <div class="metric-row"><span class="metric-name">Rank - Main Keyword</span><span class="metric-before">Page 4+</span></div>
+        </div>
+        <div class="ba-box">
+          <div class="ba-label" style="color:var(--green)">After (3 months)</div>
+          <div class="metric-row"><span class="metric-name">Monthly Views</span><span class="metric-after">11,400</span></div>
+          <div class="metric-row"><span class="metric-name">Avg CTR</span><span class="metric-after">8.9%</span></div>
+          <div class="metric-row"><span class="metric-name">Watch Time (hrs)</span><span class="metric-after">890</span></div>
+          <div class="metric-row"><span class="metric-name">Subscribers/mo</span><span class="metric-after">+340</span></div>
+          <div class="metric-row"><span class="metric-name">Rank - Main Keyword</span><span class="metric-after">#1 Position</span></div>
+        </div>
+      </div>
+      <div class="growth-bar"><div class="growth-fill" style="width:90%"></div></div>
+      <div style="display:flex;gap:0.75rem;margin-top:0.75rem;flex-wrap:wrap">
+        <span class="result-badge">+1,180% Views</span>
+        <span class="result-badge">#1 Keyword Ranking</span>
+        <span class="result-badge">7.4x Watch Time</span>
+      </div>
+    </div>
+
+    <div class="seo-case">
+      <div class="seo-header">
+        <div><div class="seo-channel">FitWith Maria</div><div style="font-size:0.78rem;color:var(--muted)">Fitness | 500 subs at start (new channel)</div></div>
+        <span class="seo-niche">Fitness</span>
+      </div>
+      <div class="before-after">
+        <div class="ba-box">
+          <div class="ba-label" style="color:var(--red)">Month 0 (Launch)</div>
+          <div class="metric-row"><span class="metric-name">Monthly Views</span><span class="metric-before">120</span></div>
+          <div class="metric-row"><span class="metric-name">Avg CTR</span><span class="metric-before">0.8%</span></div>
+          <div class="metric-row"><span class="metric-name">Watch Time</span><span class="metric-before">9 hrs</span></div>
+          <div class="metric-row"><span class="metric-name">Revenue</span><span class="metric-before">$0</span></div>
+        </div>
+        <div class="ba-box">
+          <div class="ba-label" style="color:var(--green)">Month 6</div>
+          <div class="metric-row"><span class="metric-name">Monthly Views</span><span class="metric-after">84,000</span></div>
+          <div class="metric-row"><span class="metric-name">Avg CTR</span><span class="metric-after">9.4%</span></div>
+          <div class="metric-row"><span class="metric-name">Watch Time</span><span class="metric-after">5,600 hrs</span></div>
+          <div class="metric-row"><span class="metric-name">Revenue</span><span class="metric-after">$420/mo</span></div>
+        </div>
+      </div>
+      <div class="growth-bar"><div class="growth-fill" style="width:95%"></div></div>
+      <div style="display:flex;gap:0.75rem;margin-top:0.75rem;flex-wrap:wrap">
+        <span class="result-badge">0 to Monetized</span>
+        <span class="result-badge">70,000 Subs in 6 Months</span>
+        <span class="result-badge">Multiple Viral Videos</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI WORK PAGE -->
+<div id="ai" class="page">
+  <div class="section">
+    <div class="section-label">AI Content & Automation</div>
+    <h2 class="section-title">AI-Powered YouTube Workflows</h2>
+    <p class="section-sub">I use the latest AI tools to produce more content, faster, without sacrificing quality. From scripts to finished videos.</p>
+    <div class="grid-2">
+      <div class="ai-card">
+        <div class="ai-header">
+          <div class="ai-icon">✍️</div>
+          <div class="ai-title">AI Script Writing</div>
+          <div style="font-size:0.8rem;color:var(--muted);margin-top:4px">Hook-first, retention-optimized scripts</div>
+        </div>
+        <div class="ai-body">
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">ChatGPT-4o</div><div class="tool-desc">Outline and draft generation</div></div></div>
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">Claude 3.5</div><div class="tool-desc">Long-form editing and refinement</div></div></div>
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">Jasper AI</div><div class="tool-desc">Brand-voice tone matching</div></div></div>
+          <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.8rem;color:var(--muted)">Avg script delivery: <strong style="color:var(--text)">under 4 hours</strong></div>
+        </div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-header">
+          <div class="ai-icon">🎙️</div>
+          <div class="ai-title">AI Voiceover</div>
+          <div style="font-size:0.8rem;color:var(--muted);margin-top:4px">Human-like narration for faceless videos</div>
+        </div>
+        <div class="ai-body">
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">ElevenLabs</div><div class="tool-desc">Ultra-realistic voice cloning</div></div></div>
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">Murf AI</div><div class="tool-desc">Multilingual voiceover support</div></div></div>
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">PlayHT</div><div class="tool-desc">Custom voice styles and pacing</div></div></div>
+          <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.8rem;color:var(--muted)">Languages supported: <strong style="color:var(--text)">English, Urdu, Arabic +10 more</strong></div>
+        </div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-header">
+          <div class="ai-icon">🎬</div>
+          <div class="ai-title">AI Video Generation</div>
+          <div style="font-size:0.8rem;color:var(--muted);margin-top:4px">Faceless YouTube videos from text</div>
+        </div>
+        <div class="ai-body">
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">Pictory AI</div><div class="tool-desc">Script-to-video automation</div></div></div>
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">InVideo AI</div><div class="tool-desc">Template-based video creation</div></div></div>
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">Runway ML</div><div class="tool-desc">AI-generated B-roll and clips</div></div></div>
+          <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.8rem;color:var(--muted)">Output: <strong style="color:var(--text)">Upload-ready in 24 hours</strong></div>
+        </div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-header">
+          <div class="ai-icon">🖼️</div>
+          <div class="ai-title">AI Thumbnail Generation</div>
+          <div style="font-size:0.8rem;color:var(--muted);margin-top:4px">Concept-first, designed with AI-assisted tools</div>
+        </div>
+        <div class="ai-body">
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">Midjourney v6</div><div class="tool-desc">Background and concept art creation</div></div></div>
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">Adobe Firefly</div><div class="tool-desc">Object removal and retouch</div></div></div>
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">Canva AI</div><div class="tool-desc">Fast design with brand templates</div></div></div>
+          <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.8rem;color:var(--muted)">Turnaround: <strong style="color:var(--text)">2 variants within 12 hours</strong></div>
+        </div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-header">
+          <div class="ai-icon">📊</div>
+          <div class="ai-title">AI SEO & Keyword Research</div>
+          <div style="font-size:0.8rem;color:var(--muted);margin-top:4px">Data-driven keyword strategy with AI</div>
+        </div>
+        <div class="ai-body">
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">VidIQ AI</div><div class="tool-desc">AI-powered keyword scoring</div></div></div>
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">TubeBuddy</div><div class="tool-desc">A/B title testing and tag optimization</div></div></div>
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">Semrush</div><div class="tool-desc">Competition gap and trend analysis</div></div></div>
+          <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.8rem;color:var(--muted)">Avg keywords ranked per client: <strong style="color:var(--text)">40-80</strong></div>
+        </div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-header">
+          <div class="ai-icon">🔄</div>
+          <div class="ai-title">AI Content Repurposing</div>
+          <div style="font-size:0.8rem;color:var(--muted);margin-top:4px">One video becomes 10+ pieces of content</div>
+        </div>
+        <div class="ai-body">
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">Opus Clip</div><div class="tool-desc">Auto Shorts/Reels extraction</div></div></div>
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">Descript</div><div class="tool-desc">Transcript and clip editor</div></div></div>
+          <div class="ai-tool"><div class="tool-dot"></div><div><div class="tool-name">Otter.ai</div><div class="tool-desc">Blog posts from video transcripts</div></div></div>
+          <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.8rem;color:var(--muted)">Reach expansion: <strong style="color:var(--text)">YouTube + Instagram + TikTok</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEWS PAGE -->
+<div id="reviews" class="page">
+  <div class="section">
+    <div class="section-label">Client Reviews</div>
+    <h2 class="section-title">What Clients Say</h2>
+    <p class="section-sub">Reviews collected from Fiverr, Upwork and direct clients. Every word is genuine.</p>
+    <div class="grid-2">
+
+      <div class="review-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="review-text">"Ayesha completely transformed our channel. In just 3 months our views went from barely 3,000 a month to over 18,000. Her keyword research is on another level and the thumbnails she made got us our first viral video. Worth every penny."</p>
+        <div class="reviewer">
+          <div class="avatar" style="background:rgba(233,168,46,0.15);color:var(--gold)">DM</div>
+          <div><div class="reviewer-name">Daniel M.</div><div class="reviewer-info">Finance Channel | 14K subscribers</div></div>
+          <span class="platform-badge">Fiverr</span>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="review-text">"Hired Ayesha for YouTube SEO and honestly did not expect such fast results. My main video went from page 4 to rank 1 in 6 weeks. Her communication is excellent and she explains everything clearly. Will definitely be working with her long term."</p>
+        <div class="reviewer">
+          <div class="avatar" style="background:rgba(29,158,117,0.15);color:#1D9E75">SR</div>
+          <div><div class="reviewer-name">Sam R.</div><div class="reviewer-info">Tech Reviews | YouTuber</div></div>
+          <span class="platform-badge">Upwork</span>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="review-text">"The AI faceless channel Ayesha built for me was incredible. She handled everything from script to upload-ready video. We got monetized in under 5 months. I did not even need to show my face once. This is exactly the passive YouTube system I was looking for."</p>
+        <div class="reviewer">
+          <div class="avatar" style="background:rgba(168,46,233,0.15);color:#A82EE9">JK</div>
+          <div><div class="reviewer-name">James K.</div><div class="reviewer-info">AI Business Channel Owner</div></div>
+          <span class="platform-badge">Direct Client</span>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="review-text">"Ayesha's thumbnails are genuinely some of the best I have seen. My CTR jumped from 2% to nearly 9% in the first month. She has a great eye for what works and always delivers fast. Her design sense is perfect for YouTube and she understands what makes people click."</p>
+        <div class="reviewer">
+          <div class="avatar" style="background:rgba(226,75,74,0.15);color:var(--red)">MP</div>
+          <div><div class="reviewer-name">Maria P.</div><div class="reviewer-info">Fitness & Wellness Creator</div></div>
+          <span class="platform-badge">Fiverr</span>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="review-text">"I was about to give up on my channel when I found Ayesha. She completely restructured my SEO, rewrote all my titles and descriptions, and gave me a proper content strategy. Three months later I hit 10,000 subscribers and counting. She is a true professional."</p>
+        <div class="reviewer">
+          <div class="avatar" style="background:rgba(99,181,33,0.15);color:var(--green)">LT</div>
+          <div><div class="reviewer-name">Lena T.</div><div class="reviewer-info">Personal Development Creator</div></div>
+          <span class="platform-badge">Upwork</span>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="review-text">"Working with Ayesha on our brand channel was an amazing experience. She understood our tone immediately and the video edits were so clean and professional. Our watch time increased by 6x and we got our first brand deal within 2 months of working together. Highly recommend."</p>
+        <div class="reviewer">
+          <div class="avatar" style="background:rgba(233,168,46,0.15);color:var(--gold)">AH</div>
+          <div><div class="reviewer-name">Ahmed H.</div><div class="reviewer-info">E-Commerce Brand | YouTube Channel</div></div>
+          <span class="platform-badge">Direct Client</span>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="review-text">"The monthly channel management package is the best investment I made for my YouTube. Ayesha handles literally everything. I just record the raw video and send it. She edits, creates the thumbnail, optimizes SEO, writes the description, and schedules it. My views have 4x'd in 4 months."</p>
+        <div class="reviewer">
+          <div class="avatar" style="background:rgba(29,158,117,0.15);color:#1D9E75">RC</div>
+          <div><div class="reviewer-name">Ryan C.</div><div class="reviewer-info">Business & Entrepreneurship Channel</div></div>
+          <span class="platform-badge">Direct Client</span>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <p class="review-text">"Ayesha is one of the most reliable freelancers I have worked with. Fast delivery, great communication, and she actually cares about results. My cooking channel went from 800 views per video to 14,000 views per video in just 2 months after her SEO and thumbnail overhaul. Five stars, no question."</p>
+        <div class="reviewer">
+          <div class="avatar" style="background:rgba(226,75,74,0.15);color:var(--red)">FN</div>
+          <div><div class="reviewer-name">Fatima N.</div><div class="reviewer-info">Food & Cooking Channel</div></div>
+          <span class="platform-badge">Fiverr</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Rating summary -->
+    <div class="card" style="margin-top:1.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap">
+      <div style="text-align:center">
+        <div style="font-family:'Clash Display',sans-serif;font-size:3rem;font-weight:700;color:var(--gold)">5.0</div>
+        <div style="color:var(--gold);font-size:1.2rem">⭐⭐⭐⭐⭐</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:4px">Average Rating</div>
+      </div>
+      <div style="flex:1;min-width:180px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:0.78rem;color:var(--muted);width:60px">Results</span><div style="flex:1;height:4px;background:var(--border);border-radius:4px;overflow:hidden"><div style="width:98%;height:100%;background:var(--gold)"></div></div><span style="font-size:0.78rem;color:var(--text);width:30px">98%</span></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:0.78rem;color:var(--muted);width:60px">Delivery</span><div style="flex:1;height:4px;background:var(--border);border-radius:4px;overflow:hidden"><div style="width:100%;height:100%;background:var(--gold)"></div></div><span style="font-size:0.78rem;color:var(--text);width:30px">100%</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:0.78rem;color:var(--muted);width:60px">Comms</span><div style="flex:1;height:4px;background:var(--border);border-radius:4px;overflow:hidden"><div style="width:100%;height:100%;background:var(--gold)"></div></div><span style="font-size:0.78rem;color:var(--text);width:30px">100%</span></div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Clash Display',sans-serif;font-size:2rem;font-weight:700;color:var(--text)">47+</div>
+        <div style="font-size:0.78rem;color:var(--muted)">Happy Clients</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Clash Display',sans-serif;font-size:2rem;font-weight:700;color:var(--text)">0</div>
+        <div style="font-size:0.78rem;color:var(--muted)">Refund Requests</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT PAGE -->
+<div id="contact" class="page">
+  <div class="section">
+    <div class="section-label">Get In Touch</div>
+    <h2 class="section-title">Let's Grow Your Channel</h2>
+    <div class="contact-wrap">
+      <div class="contact-info">
+        <div class="avail"><span class="pulse"></span> Currently accepting clients</div>
+        <div class="big-text">Ready to take your <span>YouTube</span> to the next level?</div>
+        <p style="font-size:0.88rem;color:var(--muted);line-height:1.7;margin-bottom:1.5rem">Whether you are just starting out or have an established channel that needs a growth boost, I will build a custom strategy that gets real results.</p>
+
+        <div class="contact-link">
+          <div class="contact-link-icon">💼</div>
+          <div><div class="contact-link-text">Fiverr Profile</div><div class="contact-link-sub">fiverr.com/ayeshaakmal</div></div>
+        </div>
+        <div class="contact-link">
+          <div class="contact-link-icon">🌐</div>
+          <div><div class="contact-link-text">Upwork Profile</div><div class="contact-link-sub">upwork.com/fl/ayeshaakmal</div></div>
+        </div>
+        <div class="contact-link">
+          <div class="contact-link-icon">💼</div>
+          <div><div class="contact-link-text">LinkedIn</div><div class="contact-link-sub">linkedin.com/in/ayeshaakmal</div></div>
+        </div>
+        <div class="contact-link">
+          <div class="contact-link-icon">✉️</div>
+          <div><div class="contact-link-text">Direct Email</div><div class="contact-link-sub">ayesha.youtubeexpert@gmail.com</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:1rem">
+          <div style="font-family:'Clash Display',sans-serif;font-weight:600;margin-bottom:1rem">Quick Inquiry</div>
+          <div style="margin-bottom:0.75rem">
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px">Your Name</div>
+            <input type="text" placeholder="Jack McHalffey" style="width:100%;background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-family:'Satoshi',sans-serif;font-size:0.85rem;outline:none">
+          </div>
+          <div style="margin-bottom:0.75rem">
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px">Your Channel / Website</div>
+            <input type="text" placeholder="youtube.com/yourchannel" style="width:100%;background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-family:'Satoshi',sans-serif;font-size:0.85rem;outline:none">
+          </div>
+          <div style="margin-bottom:0.75rem">
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px">Service Needed</div>
+            <select style="width:100%;background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-family:'Satoshi',sans-serif;font-size:0.85rem;outline:none">
+              <option>YouTube SEO Optimization</option>
+              <option>Thumbnail Design</option>
+              <option>Video Editing</option>
+              <option>AI Faceless Channel Setup</option>
+              <option>Full Channel Management</option>
+              <option>Multiple Services</option>
+            </select>
+          </div>
+          <div style="margin-bottom:1rem">
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px">Tell me about your channel</div>
+            <textarea placeholder="Channel niche, current subs, goals..." style="width:100%;background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:9px 12px;color:var(--text);font-family:'Satoshi',sans-serif;font-size:0.85rem;outline:none;resize:vertical;min-height:80px"></textarea>
+          </div>
+          <button class="btn-primary" style="width:100%" onclick="alert('Message sent! Ayesha will respond within 24 hours.')">Send Inquiry</button>
+        </div>
+        <div class="card" style="text-align:center">
+          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.3rem">Response time</div>
+          <div style="font-family:'Clash Display',sans-serif;font-size:1.3rem;font-weight:700;color:var(--gold)">Under 12 Hours</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">Usually within 2-4 hours on weekdays</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
